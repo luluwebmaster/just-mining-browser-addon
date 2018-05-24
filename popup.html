@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<!--APP Meta-->
+		<meta charset="utf-8" />
+
+		<!--APP Title-->
+		<title>{app-name}</title>
+
+		<!--APP Scripts-->
+		<script src="/publics/libraries/jquery/jquery-3.2.1.min.js"></script>
+		<script src="/publics/libraries/safeResponse/safeResponse.js"></script>
+		<script src="/publics/scripts/config/config.js"></script>
+		<script src="/publics/scripts/functions/showMessage.js"></script>
+		<script src="/publics/scripts/objects/Lang.js"></script>
+		<script src="/publics/scripts/objects/Local_Storage.js"></script>
+		<script src="/publics/scripts/objects/OP_Requests.js"></script>
+		<script src="/publics/scripts/objects/Coinmarketcap.js"></script>
+		<script src="/publics/scripts/objects/WebsiteRequest.js"></script>
+		<script src="/publics/scripts/objects/WebsiteManager.js"></script>
+		<script src="/publics/scripts/app/popup.js"></script>
+
+		<!--APP CSS-->
+		<link href="/publics/libraries/fontawesome/css/fontawesome-all.css" type="text/css" rel="stylesheet" />
+		<link href="/publics/css/style.css" type="text/css" rel="stylesheet" />
+	</head>
+	<body>
+
+		<!--APP HTML Content-->
+		<div class="loading-popup">
+			<div class="loading">
+				<img src="publics/images/loading.svg" />
+				<a href="https://www.just-mining.com/" target="_blank" class="link">www.just-mining.com</a>
+			</div>
+		</div>
+		<div class="content">
+			<div class="item wallets">
+				<h3 text-id="content-wallets-title" class="title"></h3>
+				<div class="content"></div>
+			</div>
+			<div class="item contracts">
+				<h3 text-id="content-contracts-title" class="title"></h3>
+				<div class="content"></div>
+			</div>
+			<div class="item infos">
+				<h3 text-id="content-infos-title" class="title"></h3>
+				<div class="content">
+					<span class="item" text-id="content-infos-items-1"></span>
+					<span class="item" text-id="content-infos-items-2"></span>
+					<span class="item" text-id="content-infos-items-3"></span>
+					<span class="item" text-id="content-infos-items-4"></span>
+				</div>
+			</div>
+		</div>
+		<div class="responseMessage"></div>
+		<div class="googleAuth">
+			<div class="content">
+				<span class="close"><i class="far fa-times-circle"></i></span>
+				<input type="number" class="code" placeholder="{google-auth-placeholder}" />
+				<div class="description" text-id="google-auth-description"></div>
+			</div>
+		</div>
+	</body>
+</html>

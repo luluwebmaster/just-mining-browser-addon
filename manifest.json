@@ -1,0 +1,32 @@
+{
+	"manifest_version" : 2,
+	"name" : "Just-Mining - Manager",
+	"author" : "@luluwebmaster",
+	"description" : "Just-Mining - Manager, est un outil non officiel permettant de gérer vos offres chez Just-Mining.",
+	"version" : "1.0.0",
+	"permissions" : [
+		"storage",
+		"*://*.just-mining.com/*",
+		"*://*.coinmarketcap.com/*"
+	],
+	"homepage_url": "https://www.just-mining.com/",
+	"icons": {
+		"16": "/publics/images/icon-128.png",
+		"48": "/publics/images/icon-128.png",
+		"128": "/publics/images/icon-128.png"
+	},
+	"browser_action": {
+		"default_icon": "/publics/images/icon-128.png",
+		"default_title": "Just-Mining - Manager",
+		"default_popup": "popup.html"
+	},
+	"background": {
+		"page": "/background.html"
+	},
+	"applications": {
+		"gecko": {
+			"id": "contact@luluwebmaster.fr-just-mining-manager",
+			"strict_min_version": "45.0"
+		}
+	}
+}

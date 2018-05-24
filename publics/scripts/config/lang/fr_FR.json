@@ -1,0 +1,50 @@
+{
+	"content": {
+		"error": {
+			"1": "Vous devez être connecté au site pour utiliser l'extension."
+		},
+		"wallets": {
+			"title": "Mes wallets",
+			"wallet": {
+				"title": "Source : Coinmarketcap.com"
+			}
+		},
+		"contracts": {
+			"title": "Mes contrats",
+			"contract": {
+				"title": "Effectuer une action",
+				"reboot": "Redémarrer ma machine",
+				"update": {
+					"currency": "Change de monnaie minée : ",
+					"auto": "Passer en mode automatique"
+				},
+				"infos": {
+					"1": "Début : ",
+					"2": "Hash : ",
+					"3": "Hash par carte",
+					"4": "Températures"
+				},
+				"actions": {
+					"1": "Votre machine va redémarrer d'ici moins de 10 minutes."
+				}
+			}
+		},
+		"infos": {
+			"title": "Informations",
+			"items": {
+				"1": "Cette extension n'est pas officielle.",
+				"2": "Elle n'est pas affiliée à <a href=\"https://www.just-mining.com/\" target=\"_blank\">www.just-mining.fr</a>.",
+				"3": "Développement par <a href=\"https://www.luc-mergault.fr/\" target=\"_blank\">Luc Mergault</a>.",
+				"4": "Les sources se trouvent sur <a href=\"https://github.com/luluwebmaster/just-mining-browser-addon\" target=\"_blank\">GitHub</a>."
+			}
+		}
+	},
+	"google": {
+		"auth": {
+			"placeholder": "Mon code ...",
+			"description": "Afin de pouvoir gérer vos contrats et d'avoir les dernières données de ceux-ci, vous devez valider votre code d'authentification à 2 facteurs. Les données actuelles correspondent à la dernière ouverture de l'extension.",
+			"success": "Code validé, rechargement ...",
+			"error": "Une erreur est survenue."
+		}
+	}
+}
