@@ -43,8 +43,8 @@ var Coinmarketcap = {
 			return(foundCoin);
 		} else {
 
-			// Call callback
-			callback(false);
+			// Return error
+			return(false);
 		}
 	}
 };

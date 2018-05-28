@@ -11,47 +11,55 @@ var WebsiteRequest = {
 		// Ping website
 		$.get(config.website.hostUrl, null, function (response) {
 
-			// Set website infos
-			var websiteInfos = {};
+			// Get coinmarketcap infos
+			Coinmarketcap.getList(function (coinmarketcapInfos) {
 
-			// Temp append
-			var tempAppend = document.createElement("div");
-			$(tempAppend).append(response);
+				// Set website infos
+				var websiteInfos = {};
 
-			// Get wallet element
-			var walletElement = $(tempAppend).find('.wallets .list .wallet').toArray();
+				// Temp append
+				var tempAppend = document.createElement("div");
+				$(tempAppend).append(response);
 
-			// Get CSRF code
-			websiteInfos.csrf = $(tempAppend).find('meta[name="csrf-token"]')[0].content;
+				// Get wallet element
+				var walletElement = $(tempAppend).find('.wallets .list .wallet').toArray();
 
-			// Set connected status
-			websiteInfos.connected = ($(tempAppend).find('#logout-form').length > 0) ? true : false;
+				// Get CSRF code
+				websiteInfos.csrf = $(tempAppend).find('meta[name="csrf-token"]')[0].content;
 
-			// Set wallet wallets
-			websiteInfos.wallets = [];
+				// Set connected status
+				websiteInfos.connected = ($(tempAppend).find('#logout-form').length > 0) ? true : false;
 
-			// Loop in wallet list
-			for(var id in walletElement) {
+				// Set wallet wallets
+				websiteInfos.wallets = [];
 
-				// Add to wallets
-				websiteInfos.wallets.push({
-					value: parseFloat($(walletElement[id]).find(".value").text()),
-					symb: $(walletElement[id]).find(".currency").text()
-				});
-			}
+				// Loop in wallet list
+				for(var id in walletElement) {
 
-			// Remove temp doom
-			$(tempAppend).remove();
+					// Get coin infos
+					var coinInfos = Coinmarketcap.getFromListWithSymb(coinmarketcapInfos.data, $(walletElement[id]).find(".currency").text());
 
-			// Set CSRF token
-			$.ajaxSetup({
-				headers: {
-					'X-CSRF-TOKEN': websiteInfos.csrf
+					// Add to wallets
+					websiteInfos.wallets.push({
+						value: parseFloat($(walletElement[id]).find(".value").text()),
+						symb: $(walletElement[id]).find(".currency").text(),
+						estimatedValue: (Math.round((parseFloat($(walletElement[id]).find(".value").text()) * coinInfos.quotes.USD.price) * 100) / 100)
+					});
 				}
-			});
 
-			// Call caklback function
-			callback(websiteInfos);
+				// Remove temp doom
+				$(tempAppend).remove();
+
+				// Set CSRF token
+				$.ajaxSetup({
+					headers: {
+						'X-CSRF-TOKEN': websiteInfos.csrf
+					}
+				});
+
+				// Call caklback function
+				callback(websiteInfos);
+			});
 		});
 	},
 

@@ -3,7 +3,7 @@
 	"name" : "Just-Mining - Manager",
 	"author" : "@luluwebmaster",
 	"description" : "Just-Mining - Manager, est un outil non officiel permettant de gérer vos offres chez Just-Mining.",
-	"version" : "1.0.0",
+	"version" : "1.0.1",
 	"permissions" : [
 		"storage",
 		"*://*.just-mining.com/*",

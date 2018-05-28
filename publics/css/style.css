@@ -11,6 +11,7 @@ body, html {
 	width: 300px;
 	height: 500px;
 	color: #1a1a1a;
+	overflow: hidden;
 }
 
 /*Scrollbar*/
@@ -62,6 +63,7 @@ body, html {
 	text-decoration: none;
 	font-weight: bold;
 	padding: 10px;
+	background-color: white;
 }
 
 /*Response message*/
@@ -105,7 +107,8 @@ body, html {
 	left: 0px;
 	right: 0px;
 	margin: auto;
-	height: 132px;
+	height: 160px;
+	font-size: 13px;
 }
 .googleAuth .content .close {
 	display: inline-block;
@@ -157,6 +160,7 @@ body > .content {
 	left: 100%;
 	border-left: 3px solid #123248;
 	overflow: auto;
+	background-color: white;
 }
 body > .content > .item {
 	display: inline-block;
