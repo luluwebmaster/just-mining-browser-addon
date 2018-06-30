@@ -43,7 +43,7 @@ $(document).ready(function () {
 				for(var id1 in currentContract.cardsTemp) {
 
 					// Add to total
-					totalTemps = totalTemps+'<span class="item">'+currentContract.cardsTemp[id1]+'</span>';
+					totalTemps = totalTemps+'<span class="item">'+currentContract.cardsTemp[id1]+'°</span>';
 				}
 
 				// Loop in all currencies
@@ -58,9 +58,18 @@ $(document).ready(function () {
 
 				// Append element
 				$("body > .content > .contracts > .content").append(
-					'<div class="contract" contract-id="'+currentContract.contractId+'" bob-id="'+currentContract.bobId+'">'+
-						'<h3 class="title '+currentContract.statusCode+'">'+((infos.oneTimePassword == false) ? '[<i class="fas fa-wrench action"></i>] ' : "")+'['+((currentContract.statusCode == "correct") ? '<i class="far fa-check-circle status" title="'+currentContract.status+'"></i>' : ((currentContract.statusCode == "rebooting") ? '<i class="far fa-check-circle status" title="'+currentContract.status+'"></i>' : '<i class="far fa-times-circle status" title="'+currentContract.status+'"></i>'))+'] '+currentContract.name+'</h3>'+
+					'<div class="contract" contract-type="'+currentContract.contractType+'" contract-id="'+currentContract.contractId+'" bob-id="'+currentContract.bobId+'">'+
+						'<h3 class="title '+((currentContract.contractType == "cloud") ? "green" : currentContract.statusCode)+'">'+((infos.oneTimePassword == false && currentContract.statusCode !== "blue") ? '[<i class="fas fa-wrench action"></i>] ' : "")+'['+((currentContract.statusCode == "green" || currentContract.contractType == "cloud") ? '<i class="far fa-check-circle status" title="'+currentContract.status+'"></i>' : ((currentContract.statusCode == "blue") ? '<i class="far fa-check-circle status" title="'+currentContract.status+'"></i>' : '<i class="far fa-times-circle status" title="'+currentContract.status+'"></i>'))+'] '+currentContract.name+'</h3>'+
 						'<div class="content">'+
+							'<div class="action">'+
+								'<h3 class="title">'+Lang.get("content-contracts-contract-title")+'</h3>'+
+								'<div class="update">'+totalCurrencies+'</div>'+
+								((currentContract.contractType == "bob") ?
+									'<div class="reboot '+((currentContract.statusCode == "rebooting") ? "disabled" : "")+'" title="'+Lang.get("content-contracts-contract-reboot")+'">'+
+										'<i class="fas fa-sync"></i>'+
+									'</div>'
+								 : "")+
+							'</div>'+
 							'<div class="infos">'+
 								'<div class="item">'+
 									'<span class="name">'+Lang.get("content-contracts-contract-infos-1")+'</span>'+
@@ -69,22 +78,18 @@ $(document).ready(function () {
 								'<div class="item">'+
 									'<span class="name">'+Lang.get("content-contracts-contract-infos-2")+'</span>'+
 									'<span class="value">'+currentContract.hashTotal+'</span>'+
-								'</div>'+
-								'<div class="item content first">'+
-									'<span class="name">'+Lang.get("content-contracts-contract-infos-3")+'</span>'+
-									'<div class="value">'+totalCardsHash+'</div>'+
-								'</div>'+
-								'<div class="item content">'+
-									'<span class="name">'+Lang.get("content-contracts-contract-infos-4")+'</span>'+
-									'<div class="value">'+totalTemps+'</div>'+
-								'</div>'+
-							'</div>'+
-							'<div class="action">'+
-								'<h3 class="title">'+Lang.get("content-contracts-contract-title")+'</h3>'+
-								'<div class="update">'+totalCurrencies+'</div>'+
-								'<div class="reboot '+((currentContract.statusCode == "rebooting") ? "disabled" : "")+'" title="'+Lang.get("content-contracts-contract-reboot")+'">'+
-									'<i class="fas fa-sync"></i>'+
-								'</div>'+
+								'</div>'+((currentContract.cardsHash.length > 0) ?
+									'<div class="item content first">'+
+										'<span class="name">'+Lang.get("content-contracts-contract-infos-3")+'</span>'+
+										'<div class="value">'+totalCardsHash+'</div>'+
+									'</div>'
+								: "")+
+								((currentContract.cardsTemp.length> 0) ?
+									'<div class="item content">'+
+										'<span class="name">'+Lang.get("content-contracts-contract-infos-4")+'</span>'+
+										'<div class="value">'+totalTemps+'</div>'+
+									'</div>'
+								: "")+
 							'</div>'+
 						'</div>'+
 					'</div>'
@@ -95,25 +100,28 @@ $(document).ready(function () {
 			$("body > .content > .contracts > .content > .contract > .title > .action").click(function () {
 
 				// If for open
-				if($(this).closest(".contract").find(".action").css("top") == "auto" || $(this).closest(".contract").find(".action").css("top") == "-100%") {
+				if($(this).closest(".contract").find("div.action").height() <= 0) {
 
 					// Start animation
-					$(this).closest(".contract").find(".action").animate({
-						top: "0px",
-						bottom: "0px"
+					$(this).closest(".contract").find("div.action").animate({
+						'max-height': "200px",
+						'border-bottom-width': "1px"
 					}, 100);
 				} else {
 
 					// Start animation
-					$(this).closest(".contract").find(".action").animate({
-						top: "-100%",
-						bottom: "100%"
+					$(this).closest(".contract").find("div.action").animate({
+						'max-height': "0px",
+						'border-bottom-width': "0px"
 					}, 100);
 				}
 			});
 
 			// Click on actions button for update currency
 			$("body > .content > .contracts > .content > .contract > .content > .action > .update > .icon").click(function () {
+
+				// Get contract type
+				var contractType = $(this).closest(".contract").attr("contract-type");
 
 				// Get contract id
 				var contractId = $(this).closest(".contract").attr("contract-id");
@@ -122,7 +130,7 @@ $(document).ready(function () {
 				var currencySymb = $(this).attr("currency-symb");
 
 				// Switch currency
-				WebsiteManager.switchCurrency(contractId, currencySymb, function () {
+				WebsiteManager.switchCurrency(contractType, contractId, currencySymb, function () {
 
 					// Show message
 					showMessage(Lang.get("content-contracts-contract-actions-1"), "success", 5);
@@ -144,11 +152,11 @@ $(document).ready(function () {
 					// Save this button
 					var currentButton = this;
 
-					// Get bob id
-					var bobId = $(this).closest(".contract").attr("bob-id");
+					// Get contract id
+					var contractId = $(this).closest(".contract").attr("contract-id");
 
 					// Reboot bob
-					WebsiteManager.rebootBob(bobId, function () {
+					WebsiteManager.rebootBob(contractId, function () {
 
 						// Disable button
 						$(currentButton).addClass("disabled");

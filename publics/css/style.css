@@ -225,13 +225,13 @@ body > .content > .contracts > .content > .contract > .title {
 body > .content > .contracts > .content > .contract > .title .status  {
 	margin: 0px 2px 2px 2px;
 }
-body > .content > .contracts > .content > .contract > .title.correct .status  {
+body > .content > .contracts > .content > .contract > .title.green .status  {
 	color: #009d21;
 }
-body > .content > .contracts > .content > .contract > .title.defective .status {
+body > .content > .contracts > .content > .contract > .title.red .status {
 	color: #ff0000;
 }
-body > .content > .contracts > .content > .contract > .title.rebooting .status {
+body > .content > .contracts > .content > .contract > .title.blue .status {
 	color: #5996da;
 }
 body > .content > .contracts > .content > .contract > .title > .action {
@@ -288,15 +288,15 @@ body > .content > .contracts > .content > .contract > .content > .infos > .item.
 	background-color: #e4aaaa;
 }
 body > .content > .contracts > .content > .contract > .content > .action {
-	display: inline-block;
-	position: absolute;
-	top: -100%;
-	bottom: 100%;
-	left: 0px;
-	right: 0px;
+	display: block;
 	background-color: white;
 	text-align: center;
 	user-select: none;
+	max-height: 0px;
+	overflow: hidden;
+	border-bottom-color: #d3d3d3;
+	border-bottom-style: solid;
+	border-bottom-width: 0px;
 }
 body > .content > .contracts > .content > .contract > .content > .action > .title {
 	display: inline-block;

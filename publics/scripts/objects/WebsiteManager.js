@@ -51,7 +51,7 @@ var WebsiteManager = {
 					if($(tempAppend).find("#one_time_password").length <= 0) {
 
 						// Get contract list
-						var contractListDom = $(tempAppend).find("#customerContractsPage .element_contract").toArray();
+						var contractListDom = $(tempAppend).find("#customerContractsPage .element_contract, #customerContractsPage .element_bob").toArray();
 
 						// Loop in all dom contract
 						for(var id in contractListDom) {
@@ -61,24 +61,25 @@ var WebsiteManager = {
 
 							// Add to contract list
 							contractsList.push({
-								contractId: parseFloat($(currentContract).find(".currencySwitcher").attr("id").replace("currencySwitcher_contract", "")),
-								bobId: parseFloat($(currentContract).attr("id").replace("element_bob_", "")),
-								name: $(currentContract).find(".informations .title").text().trim(),
-								start: $($(currentContract).find(".informations .line")[0]).find(".data").text().trim(),
-								lastData: $($(currentContract).find(".informations .line")[1]).find(".data").text().trim(),
-								upTime: $($(currentContract).find(".informations .line")[2]).find(".data").text().trim(),
-								hashTotal: $($(currentContract).find(".informations .line")[3]).find(".data").text().trim(),
+								contractType: contractType = (($(currentContract).attr("id") !== undefined) ? "bob" : "cloud"),
+								contractId: parseFloat((contractType == "cloud") ? $(currentContract).find(".currencySwitcher").attr("id").replace("currencySwitcher_contract", "") : $(currentContract).find(".header .name").text().trim().split("-")[1]),
+								bobId: ((contractType == "bob") ? parseFloat($(currentContract).attr("id").replace("bob", "")) : null),
+								name: $(currentContract).find(".informations .title, .header .name").text().trim(),
+								start: $($(currentContract).find(".informations .line")[((contractType == "bob") ? 1 : 1)]).find(".data").text().trim(),
+								// lastData: $($(currentContract).find(".informations .line")[1]).find(".data").text().trim(),
+								upTime: $($(currentContract).find(".informations .line")[((contractType == "bob") ? 1 : 2)]).find(".data").text().trim(),
+								hashTotal: $($(currentContract).find(".informations .line")[((contractType == "bob") ? 0 : 3)]).find(".data").text().trim(),
 								cardsHash: [],
 								cardsTemp: [],
-								currentCurrency: $(currentContract).find(".currencySwitcher .currencyAmount.current strong").text().trim(),
+								currentCurrency: $(currentContract).find(".currencySwitcher .currencyAmount.current strong, .commands .command .currency").text().trim(),
 								currenciesList: [],
-								status: $(currentContract).find(".commands .status span").text().trim(),
-								statusCode: $(currentContract).find(".commands .status span").attr("class"),
-								mode: $(currentContract).find(".currencySwitcher .summary .mode").text().split(":")[1].trim().toLowerCase()
+								status: $(currentContract).find(".header .status span").text().trim(),
+								statusCode: $(currentContract).find(".header .status span").attr("class"),
+								mode: ((contractType == "cloud") ? $(currentContract).find(".currencySwitcher .summary .mode").text().split(":")[1] : $(currentContract).find(".commands .switcher .mode").text()).trim().toLowerCase()
 							});
 
 							// Set total cards hash
-							var totalCardsHash = $($(currentContract).find(".informations .line")[4]).find(".data span").toArray();
+							var totalCardsHash = $($(currentContract).find(".informations .line")[((contractType == "bob") ? 2 : 4)]).find(".list span").toArray();
 
 							// Loop in all cards hash
 							for(var id1 in totalCardsHash) {
@@ -86,12 +87,12 @@ var WebsiteManager = {
 								// Push to cards hash
 								contractsList[contractsList.length-1].cardsHash.push({
 									value: parseFloat($(totalCardsHash[id1]).text()),
-									status: ($(totalCardsHash[id1]).hasClass("critical")) ? "critical" : "correct"
+									status: ($(totalCardsHash[id1]).hasClass("red")) ? "critical" : "correct"
 								});
 							}
 
 							// Set total cards temp
-							var totalCardsTemp = $($(currentContract).find(".informations .line")[5]).find(".data span").toArray();
+							var totalCardsTemp = $($(currentContract).find(".informations .line")[((contractType == "bob") ? 3 : 5)]).find(".list span").toArray();
 
 							// Loop in all cards temp
 							for(var id1 in totalCardsTemp) {
@@ -101,16 +102,16 @@ var WebsiteManager = {
 							}
 
 							// Set total currencies
-							var totalCurrencies = $(currentContract).find(".currencySwitcher .summary .currency").toArray();
+							var totalCurrencies = $(currentContract).find(".statistics .line, .currencySwitcher .summary .currency").toArray();
 
 							// Loop in all currencies
 							for(var id1 in totalCurrencies) {
 
 								// Push to cards temp
 								contractsList[contractsList.length-1].currenciesList.push({
-									symb: $(totalCurrencies[id1]).find(".currencyAmount strong").text().trim(),
-									balance: parseFloat($(totalCurrencies[id1]).find(".currencyAmount").text().trim()),
-									selected: (($(totalCurrencies[id1]).find(".currencyAmount").hasClass("current")) ? true : false)
+									symb: symb = $(totalCurrencies[id1]).find(".unit, .currencyAmount strong").text().trim(),
+									balance: parseFloat($(totalCurrencies[id1]).find(".amount, .currencyAmount").text().trim()),
+									selected: ((symb == $(currentContract).find(".commands .command .currency").text()) || $(totalCurrencies[id1]).find(".currencyAmount").hasClass("current")) ? true : false
 								});
 							}
 						}
@@ -143,7 +144,7 @@ var WebsiteManager = {
 	},
 
 	// Function for switch currency
-	switchCurrency: function (contractId = null, type = null, callback) {
+	switchCurrency: function (contractType = "bob", contractId = null, type = null, callback) {
 
 		// Set callback
 		callback = (callback !== undefined) ? callback : function() {};
@@ -158,12 +159,15 @@ var WebsiteManager = {
 				if(infos.connected == true) {
 
 					// Execute request
-					WebsiteRequest.post("/contract/"+contractId+"/switchCurrency", {
+					WebsiteRequest.post(((contractType == "bob") ? "/bob/"+contractId+"/switchCurrency" : "/contract/"+contractId+"/switchCurrency"), {
 						currency: type
 					}, function (response) {
 
+						// Parse response
+						response = JSON.parse(response);
+
 						// Call callback
-						callback((response == "true") ? true : false);
+						callback((response.status == "waitingReboot") ? true : false);
 					});
 				}
 			});
@@ -175,13 +179,13 @@ var WebsiteManager = {
 	},
 
 	// Function for reboot bob
-	rebootBob: function (bobId = null, callback) {
+	rebootBob: function (contractId = null, callback) {
 
 		// Set callback
 		callback = (callback !== undefined) ? callback : function() {};
 
 		// Check values
-		if(bobId !== null) {
+		if(contractId !== null) {
 
 			// Ping Website
 			WebsiteRequest.ping(function (infos) {
@@ -190,15 +194,13 @@ var WebsiteManager = {
 				if(infos.connected == true) {
 
 					// Execute request
-					WebsiteRequest.post("/account/contract/bob/reboot", {
-						bob_id: bobId
-					}, function (response) {
+					WebsiteRequest.post("/bob/"+contractId+"/reboot", {}, function (response) {
 
-						// Parse repsonse
+						// Parse response
 						response = JSON.parse(response);
 
 						// Call callback
-						callback((response.type == "success") ? true : false);
+						callback((response.status == "waitingReboot") ? true : false);
 					});
 				}
 			});
