@@ -9,7 +9,7 @@ Firefox Download :
 - https://addons.mozilla.org/fr/firefox/addon/just-mining-manager/
 
 Presentation ( FR ) :
-- Soon on : https://www.luluwebmaster.fr
+- https://www.luluwebmaster.fr/creation-89/just-mining-manager.htm
 
 Just Mining : 
 - https://www.just-mining.com/
